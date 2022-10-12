@@ -93,15 +93,6 @@ Run command
 make deploy-infra
 ```
 
-### To update the infrastructure
-
-Terraform *apply* is the command used to change a desired target state for an environment.  Apply will prompt for changes made to an environment prior to deployment.  The response for this action may be automated using a switch at the time of execution.  The *update-infra* command performs this action to update the target infrastructure.
-
-Run command
-```shell
-make update-infra
-```
-
 ### To delete all resource with Terraform
 
 Terraform *destroy* is the command used to destroy an environment based on the information in the state file.
