@@ -35,7 +35,7 @@ endif
 # CHECK TERRAFORM VERSION
 TERRAFORM := $(shell command -v terraform 2> /dev/null)
 USER_HOME_DIRECTORY := $(HOME)
-DEMO_BUILD_DIRECTORY := private-rest-api
+DEMO_BUILD_DIRECTORY := deploy-python-flask-microservices-to-aws-using-open-source-tools-part2
 CODE_COMMIT_DIRECTORY := FlaskDemoRepo
 BRANCH := main
 AWS_ACCOUNT_ID := $(shell aws sts get-caller-identity --query "Account" --output text)
@@ -58,14 +58,14 @@ TERRAFORM_VERSION := $(shell terraform --version 2> /dev/null)
 CODECOMMIT_REPO := $(shell aws codecommit list-repositories \
 					--query repositories[*].repositoryName \
 					--output text)
-GITHUB_REPO := private-rest-api
-GITHUB_REPO_TERRAFORM_DIR := private-rest-api/terraform
+GITHUB_REPO := deploy-python-flask-microservices-to-aws-using-open-source-tools-part2
+GITHUB_REPO_TERRAFORM_DIR := deploy-python-flask-microservices-to-aws-using-open-source-tools-part2/terraform
 
 
-all: local plan deploy-infra update-infra configure-repo upload-codecommit update-flask-app destroy clean
+all: local plan configure-repo upload-codecommit deploy-infra update-infra update-flask-app destroy clean
 	@echo "$(GRE) INFO: Applying all options"
 
-.PHONY: apply clean destroy configure-repo plan upload
+.PHONY: plan configure-repo upload-codecommit deploy-infra update-infra update-flask-app destroy clean
 local:
 	@terraform --version
 ifdef TERRAFORM
