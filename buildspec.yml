@@ -1,0 +1,29 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - apt-get update
+      - apt install jq
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin $ECR_REPO_URL
+      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+  build:
+    commands:
+      - echo Building Flask app
+      - docker build -t $ECR_REPO_URL:$IMAGE_TAG -t $ECR_REPO_URL:latest .
+  post_build:
+    commands:
+      - echo Pushing the Docker images to ECR
+      - docker push $ECR_REPO_URL:latest
+      - docker push $ECR_REPO_URL:$IMAGE_TAG
+      - aws ecs describe-task-definition --task-definition $TASK_DEFINITION | jq '.taskDefinition' > taskdef.json
+      - envsubst < appspec.yaml > appspec.yml
+      - printf '{"ImageURI":"%s"}' ${ECR_REPO_URL}:${IMAGE_TAG} > imageDetail.json
+artifacts:
+  files:
+    - appspec.yml
+    - taskdef.json
+    - image*.json
